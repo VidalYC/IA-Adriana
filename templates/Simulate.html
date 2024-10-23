@@ -1,0 +1,22 @@
+<!-- templates/Simulate.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Simulación de la Red Neuronal</title>
+</head>
+<body>
+    <h1>Simulación de la Red Neuronal</h1>
+    <p>{{ message }}</p>
+    <form action="/simulate_result" method="post">
+        <label for="vector">Introduce el vector de entrada (separado por comas):</label>
+        <input type="text" name="vector" id="vector">
+        <input type="submit" value="Simular">
+    </form>
+
+    <h2>Comportamiento de DM</h2>
+    <img src="{{ dm_plot }}" alt="Gráfico de DM">
+
+    <h2>Comportamiento de los Pesos Sinápticos</h2>
+    <img src="{{ weights_plot }}" alt="Gráfico de Pesos Sinápticos">
+</body>
+</html>

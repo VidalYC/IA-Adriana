@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Resultados</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css?family=Exo:400,700');
+
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Exo', sans-serif;
+            background: radial-gradient(ellipse at bottom, #1B2735 0%, #090A0F 100%);
+            overflow: hidden;
+            color: #fff;
+        }
+
+        .area {
+            background: radial-gradient(ellipse at bottom, #1B2735 0%, #090A0F 100%);
+            width: 100%;
+            height: 100vh;
+            position: relative;
+            z-index: 0;
+        }
+
+        .circles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 0;
+        }
+
+        .circles li {
+            position: absolute;
+            display: block;
+            list-style: none;
+            width: 20px;
+            height: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            animation: animate 25s linear infinite;
+            bottom: -150px;
+        }
+
+        @keyframes animate {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 1;
+                border-radius: 0;
+            }
+            100% {
+                transform: translateY(-1000px) rotate(720deg);
+                opacity: 0;
+                border-radius: 50%;
+            }
+        }
+
+        .container {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            backdrop-filter: blur(6.5px);
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            padding: 20px;
+            text-align: center;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1;
+            display: flex;
+            flex-direction: row; /* Cambiado a fila */
+            justify-content: space-around; /* Espaciado entre contenedores */
+            align-items: flex-start; /* Alineación superior */
+            width: 80%; /* Ancho del contenedor principal */
+        }
+
+        h1 {
+            color: #fff;
+            margin-bottom: 20px;
+        }
+
+        .table-container {
+            width: 45%; /* Ancho del contenedor de la tabla */
+            margin-right: 20px; /* Espacio entre contenedores */
+            overflow-y: auto; /* Habilitar scroll vertical */
+            max-height: 300px; /* Altura máxima para el scroll */
+            scrollbar-width: none; /* Para Firefox */
+            -ms-overflow-style: none; /* Para Internet Explorer y Edge */
+        }
+
+        .table-container::-webkit-scrollbar {
+            display: none; /* Para Chrome, Safari y Opera */
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border: 1px solid #fff;
+        }
+
+        th {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        input[type="text"] {
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            margin: 10px 0;
+            width: 80%;
+        }
+
+        input[type="submit"], button {
+            background: #fcfcfc5b;
+            border: none;
+            border-radius: 5px;
+            color: #fcfcfcb2;
+            padding: 10px 20px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        input[type="submit"]:hover, button:hover {
+            background: #005892;
+        }
+
+        .search-container {
+            background: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            backdrop-filter: blur(6.5px);
+            border-radius: 10px;
+            padding: 20px;
+            width: 300px ; /* Ancho fijo para el contenedor de búsqueda */
+            text-align: center;
+        }
+
+        .image-container {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .image-container img {
+            max-width: 100%;
+            height: auto;
+            border: 1px solid #fff ;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="area">
+        <ul class="circles">
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+        </ul>
+    </div>
+    <div class="container">
+        <div class="table-container">
+            <h1>Vectores suma de cada imagen:</h1>
+            <table>
+                <tr>
+                    <th>Imagen</th>
+                    <th>Vector Suma</th>
+                </tr>
+                {% for vector, path in data %}
+                <tr>
+                    <td>{{ loop.index }}</td>
+                    <td>{{ vector }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+        <div class="search-container">
+            <h1>Buscar Imagen</h1>
+            <form action="/find_image" method="post">
+                <label for="vector">Introduce el vector suma (separado por comas):</label>
+                <input type="text" name="vector" id="vector">
+                <input type="submit" value="Buscar">
+            </form>
+            <div class="image-container">
+                {% if image_found %}
+                <img src="{{ url_for('uploaded_file', filename=image_found.split('/')[-1]) }}" alt="Imagen">
+                {% endif %}
+            </div>
+        </div>
+        <a href="/config"><button>Configurar</button></a>
+    </div>
+</body>
+</html>

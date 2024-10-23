@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configuración de la Red Neuronal</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css?family=Exo:400,700');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Exo', sans-serif;
+        }
+
+        body {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: radial-gradient(ellipse at bottom, #1B2735 0%, #090A0F 100%);
+            color: #fff;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.3);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            backdrop-filter: blur(10px);
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            padding: 30px;
+            width: 80%;
+            max-width: 600px;
+            height: 80%;
+            overflow-y: auto;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+            scrollbar-width: none; /* Ocultar barra de desplazamiento en Firefox */
+        }
+
+        .container::-webkit-scrollbar {
+            display: none; /* Ocultar barra de desplazamiento en WebKit (Chrome, Safari) */
+        }
+
+        h1 {
+            color: #fff;
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-top: 10px;
+            text-align: left;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        select {
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            width: calc(100% - 22px);
+            margin: 10px 0;
+            background: rgba(255, 255, 255, 0.8);
+            color: #333;
+        }
+
+        input[type="button"],
+        input[type="submit"] {
+            background: #fcfcfc5b;
+            border: none;
+            border-radius: 5px;
+            color: #fcfcfcb2;
+            padding: 10px 20px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            margin-top: 20px;
+        }
+
+        input[type="button"]:hover,
+        input[type="submit"]:hover {
+            background: #005892;
+        }
+
+        /* Estilo para el mensaje de éxito */
+        .success-message {
+            display: none; /* Inicialmente oculto */
+            margin-top: 10px; /* Ajuste para que esté más cerca del botón */
+            color: #4caf50; /* Color verde para éxito */
+        }
+
+        /* Estilo para la página de carga */
+        .loading-page {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 200%; /* Cambiado a 100% para cubrir toda la pantalla */
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        .loading-page h2 {
+            font-size: 24px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Configuración de la Red Neuronal</h1>
+        <form action="/set_config" method="post" id="config-form">
+            <input type="hidden" name="num_patterns" value="{{ num_patterns }}">
+            <input type="hidden" name="num_inputs" value="{{ num_inputs }}">
+            <input type="hidden" name="neighborhood_coef" value="{{ neighborhood_coef }}">
+            <input type="hidden" name="learning_rate" value="{{ learning_rate }} ">
+
+            <label for="num _patterns">Número de Patrones:</label>
+            <input type="text" id="num_patterns" value="{{ num_patterns }}" readonly>
+
+            <label for="num_inputs">Número de Entradas:</label>
+            <input type="text" id ="num_inputs" value="{{ num_inputs }}" readonly>
+
+            <label for="num_neurons">Número de Neuronas en la Capa de Procesamiento:</label>
+            <input type="number" name="num_neurons" id="num_neurons" value="{{ num_neurons }}" min="{{ num_neurons }}" required>
+
+            <label for="competition_type">Tipo de Competencia:</label>
+            <select name="competition_type" id="competition_type">
+                <option value="hard">Competencia Dura</option>
+                <option value="soft">Competencia Blanda</option>
+            </select>
+
+            <label for="iterations">Iteraciones:</label>
+            <input type="number" name="iterations" id="iterations" value="100" required>
+
+            <label for="neighborhood_coef">Coeficiente de Vecindad (Dinámico):</label>
+            <input type="text" id="neighborhood_coef" value="{{ neighborhood_coef }}" readonly>
+
+            <label for="learning_rate">Tasa de Aprendizaje (Dinámico):</label>
+            <input type="text" id="learning_rate" value="1" readonly>
+
+            <input type="button" value="Guardar Configuración" id="save-config">
+            <p class="success-message" id="success-message">Configuración guardada con éxito!</p>
+        </form>
+
+        <div style="height: 50px;"></div> <!-- Separación entre secciones -->
+
+        <h1>Entrenamiento de la Red Neuronal</h1>
+        <form action="/train" method="post">
+            <input type="submit" value="Iniciar Entrenamiento">
+        </form>
+
+        <div class="loading-page" id="loading-page">
+            <h2>Cargando...</h2>
+        </div>
+
+        <script>
+            const saveConfigButton = document.querySelector("#save-config"),
+                successMessage = document.querySelector("#success-message"),
+                loadingPage = document.querySelector("#loading-page"),
+                configForm = document.querySelector("#config-form"),
+                trainForm = document.querySelector("form[action='/train']");
+
+            saveConfigButton.addEventListener("click", (e) => {
+                e.preventDefault();
+                configForm.submit();
+                successMessage.style.display = "block"; 
+            });
+
+            trainForm.addEventListener("submit", (e) => {
+                e.preventDefault();
+                document.body.style.overflow = "hidden";
+                document.body.scrollTop = 0; // Desplazar la vista al principio del formulario
+                document.documentElement.scrollTop = 0; // Desplazar la vista al principio del formulario (para Firefox)
+                loadingPage.style.display = "flex";
+                setTimeout(() => {
+                    trainForm.submit();
+                }, 2000);
+            });
+        </script>
+    </div>
+</body>
+</html>
