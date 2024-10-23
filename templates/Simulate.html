@@ -1,22 +1,137 @@
-<!-- templates/Simulate.html -->
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Simulación de la Red Neuronal</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css?family=Exo:400,700');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Exo', sans-serif;
+        }
+
+        body {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: radial-gradient(ellipse at bottom, #1B2735 0%, #090A0F 100%);
+            color: #fff;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .container {
+            display: flex;
+            width: 80%;
+            max-width: 1200px;
+            height: auto;
+            background: rgba(255, 255, 255, 0.3);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            backdrop-filter: blur(10px);
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+
+        .left {
+            flex: 1;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .right {
+            flex: 1;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .image-container {
+            max-height: 400px; /* Altura máxima del contenedor de imágenes */
+            overflow-y: auto; /* Permitir desplazamiento vertical */
+            width: 100%; /* Ancho completo */
+            padding: 10px;
+            border-radius: 5px;
+            background: rgba(255, 255, 255, 0.2); /* Fondo para el contenedor */
+        }
+
+        h1, h2 {
+            color: #fff;
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-top: 10px;
+            text-align: left;
+            color: #fff;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        select {
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            width: calc(100% - 22px);
+            margin: 10px 0;
+            background: rgba(255, 255, 255, 0.8);
+            color: #333;
+        }
+
+        input[type="submit"] {
+            background: #fcfcfc5b;
+            border: none;
+            border-radius: 5px;
+            color: #fcfcfcb2;
+            padding: 10px 20px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            margin-top: 20px;
+        }
+
+        input[type="submit"]:hover {
+            background: #005892;
+        }
+
+        .image-container::-webkit-scrollbar {
+            display: none; /* Para Chrome, Safari y Opera */
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            margin-top: 20px;
+            border-radius: 5px;
+        }
+    </style>
 </head>
 <body>
-    <h1>Simulación de la Red Neuronal</h1>
-    <p>{{ message }}</p>
-    <form action="/simulate_result" method="post">
-        <label for="vector">Introduce el vector de entrada (separado por comas):</label>
-        <input type="text" name="vector" id="vector">
-        <input type="submit" value="Simular">
-    </form>
-
-    <h2>Comportamiento de DM</h2>
-    <img src="{{ dm_plot }}" alt="Gráfico de DM">
-
-    <h2>Comportamiento de los Pesos Sinápticos</h2>
-    <img src="{{ weights_plot }}" alt="Gráfico de Pesos Sinápticos">
+    <div class="container">
+        <div class="left">
+            <h1>Simulación de la Red Neuronal</h1>
+            <p>{{ message }}</p>
+            <form action="/simulate_result" method="post">
+                <label for="vector">Introduce el vector de entrada (separado por comas):</label>
+                <input type="text" name="vector" id="vector" required>
+                <input type="submit" value="Simular">
+            </form>
+        </div>
+        <div class="right">
+            <div class="image-container">
+                <h2>Comportamiento de DM</h2>
+                <img src="{{ dm_plot }}" alt="Gráfico de DM">
+                <h2>Comportamiento de los Pesos Sinápticos</h2>
+                <img src="{{ weights_plot }}" alt="Gráfico de Pesos Sinápticos ">
+            </div>
+        </div>
+    </div>
 </body>
 </html>

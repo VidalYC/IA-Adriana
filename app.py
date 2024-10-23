@@ -117,6 +117,7 @@ def set_config():
 @app.route('/train', methods=['POST'])
 def train():
     global network_config, trained_weights
+    neighborhood_coef = float(network_config['neighborhood_coef'])
     num_patterns = int(network_config['num_patterns'])
     num_inputs = int(network_config['num_inputs'])
     num_neurons = int(network_config['num_neurons'])
@@ -182,10 +183,17 @@ def train():
             # Actualizar pesos
             if competition_type == 'hard':
                 weights[:, winner_idx] += learning_rate * (pattern - weights[:, winner_idx])
+                print(f"Pesos después de actualizar (hard) - Neurona {winner_idx}: {weights[:, winner_idx]}")
             elif competition_type == 'soft':
                 for i in range(num_neurons):
-                    weights[:, i] += learning_rate * (pattern - weights[:, i])
+                    if i != winner_idx:
+                        weights[:, i] += (learning_rate * neighborhood_coef) * (pattern - weights[:, i])
+                weights[:, winner_idx] += learning_rate * (pattern - weights[:, winner_idx])
+                print(f"Pesos después de actualizar (soft): {weights}")
 
+        #print(f"Pesos después de actualizar (hard) - Neurona {winner_idx}: {weights[:, winner_idx]}")
+        #print(f"Pesos después de actualizar (soft): {weights}")
+        
         # Calcular DM para esta iteración
         if valid_patterns > 0:
             dm = dm_sum / valid_patterns
